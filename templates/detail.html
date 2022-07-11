@@ -77,6 +77,79 @@
 
     </style>
 
+    <script>
+        let word = '{{ word }}'
+            $(document).ready(function () {
+                get_definitions()
+            })
+
+            function get_definitions() {
+
+                $('#definitions').empty();
+
+                $.ajax({
+                    type: "GET",
+                    url: `https://owlbot.info/api/v4/dictionary/${word}`,
+                    beforeSend: function (xhr) {
+
+                        xhr.setRequestHeader("Authorization", "Token ff0ab0c5d7d41a250d6f369ac0334979358a469e");
+                    },
+                    data: {},
+                    error: function (xhr, status, error) {
+                        alert("에러 발생!");
+                    },
+                    success: function (response) {
+                        console.log(response);
+
+                        $('#word').text(response["word"]);
+
+                        //만약 pronunciation이 null이면
+                        if(response["pronunciation"] == null){
+
+                             $('#pronunciation').text("");
+
+                        }else{
+
+                            // 항상 백틱이 들어가면 ${}해서 받는다.
+                            $('#pronunciation').text(`/${response["pronunciation"]}/`);
+
+                        }
+
+                        let definitions = response["definitions"];
+
+                        for(let i = 0; i < definitions.length; i++){
+                            let definition = definitions[i];
+
+                            // html_temp를 초기화. 그다음 html_temp는 let 뺀다. 있으면 안나온다.
+                            let html_temp ="";
+
+                             //definition이 null인경우
+                             if(definition["example"] == null){
+                                html_temp = ` <div style="padding:10px">
+                                                <i>${definition["type"]}</i>
+                                                <br>${definition["definition"]}<br>
+                                              </div>`;
+
+                            }else{
+                                     html_temp = ` <div style="padding:10px">
+                                                <i>${definition["type"]}</i>
+                                                <br>${definition["definition"]}<br>
+                                                <span class="example">${definition["example"]}</span>
+                                              </div>`;
+                            }
+
+
+
+                            $('#definitions').append(html_temp);
+                        }
+
+                    }
+                })
+            }
+
+
+    </script>
+
 </head>
 <body>
 

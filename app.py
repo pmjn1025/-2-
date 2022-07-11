@@ -1,12 +1,15 @@
+
 from flask import Flask, render_template, request, jsonify, redirect, url_for
+
 from pymongo import MongoClient
 import requests
 
-
 app = Flask(__name__)
+
 
 client = MongoClient('52.78.245.231', 27017, username="test", password="test")
 db = client.dbsparta_plus_week2
+
 
 
 @app.route('/')
@@ -17,6 +20,7 @@ def main():
 
 @app.route('/detail/<keyword>')
 def detail(keyword):
+
     # API에서 단어 뜻 찾아서 결과 보내기
     return render_template("detail.html", word=keyword)
 
