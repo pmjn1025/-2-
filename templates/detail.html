@@ -80,7 +80,7 @@
     <script>
         let word = '{{ word }}'
             $(document).ready(function () {
-                get_definitions()
+                //get_definitions()
             })
 
             function get_definitions() {
@@ -160,27 +160,51 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-end">
             <div>
-                <h1 id="word" style="display: inline;">owl</h1>
-                <h5 id="pronunciation" style="display: inline;">/oul/</h5>
+                <!--   {{result["word"]}}도 된다. -->
+                <h1 id="word" style="display: inline;">{{result.word}}</h1>
+
+                {% if result.pronunciation != None %}
+
+                <h5 id="pronunciation" style="display: inline;">/{{result.pronunciation}}/</h5>
+
+                {% endif %}
+
             </div>
             <!-- save  -->
+            {% if status == "new" %}
+
             <button id="btn-save" class="btn btn-outline-sparta btn-lg">
                 <i class="fa-solid fa-floppy-disk"></i>
             </button>
+
+            {% else %}
 
             <!-- delete  -->
             <button id="btn-delete" class="btn btn-sparta btn-lg">
                 <i class="fa-solid fa-trash-can"></i>
             </button>
+
+            {% endif %}
+
         </div>
         <hr>
         <div id="definitions">
+            <!-- result이라는 json객체안에 definitions가 있다. -->
+            {% for definition in result.definitions %}
             <div style="padding:10px">
-                <i>noun</i>
-                <br>a nocturnal bird of prey with large eyes, a facial disc, a hooked beak, and typically a loud
-                hooting call.<br>
-                <span class="example">I love reaching out into that absolute silence, when you can hear the owl or the wind.</span>
+                <i>{{definition.type}}</i>
+                <br>{{definition.definition.encode("ascii","ignore").decode('utf-8')}}<br>
+
+                {% if definition.example != None %}
+                <!--    | safe : jinjia2같은 경우에는 api로 받을때 html 태그가 있으면 처리하지 못해
+                                 | safe로 처리해 주어야 한다.   -->
+                <!-- definition.example.encode("ascii","ignore").decode('utf-8')
+                     : definition.example 이부분이 문자열인데 아스키코드로 바꿀수 없는 문자는
+                       무시하고 다시 utf-8 문자열로 바꿔줘 utf-8로도 안바뀌면 버려줘-->
+                <span class="example">{{definition.example.encode("ascii","ignore").decode('utf-8') | safe}}</span>
+                {% endif %}
             </div>
+            {% endfor %}
         </div>
     </div>
 
