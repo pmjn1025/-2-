@@ -148,6 +148,39 @@
             }
 
 
+            function save_word() {
+                $.ajax({
+                    type: "POST",
+                    url: `/api/save_word`,
+                    data: {
+                        word_give : "{{word}}",
+                        definition_give : "{{result.definitions[0].definition}}"
+                    },
+                    success: function (response) {
+                       alert(response["msg"]);
+
+                       window.location.href = "/detail/{{word}}?status_give=old";
+
+                    }
+                });
+            }
+
+            function delete_word() {
+                $.ajax({
+                    type: "POST",
+                    url: `/api/delete_word`,
+                    data: {
+                        word_give : "{{word}}"
+                    },
+                    success: function (response) {
+                        alert(response["msg"]);
+
+                        window.location.href = "/";
+                    }
+                });
+            }
+
+
     </script>
 
 </head>
@@ -173,14 +206,14 @@
             <!-- save  -->
             {% if status == "new" %}
 
-            <button id="btn-save" class="btn btn-outline-sparta btn-lg">
+            <button id="btn-save" class="btn btn-outline-sparta btn-lg" onclick="save_word()">
                 <i class="fa-solid fa-floppy-disk"></i>
             </button>
 
             {% else %}
 
             <!-- delete  -->
-            <button id="btn-delete" class="btn btn-sparta btn-lg">
+            <button id="btn-delete" class="btn btn-sparta btn-lg" onclick="delete_word()">
                 <i class="fa-solid fa-trash-can"></i>
             </button>
 
