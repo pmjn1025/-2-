@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-
+import requests
 
 app = Flask(__name__)
 
@@ -12,7 +12,11 @@ def main():
 
 @app.route('/detail')
 def detail():
-    return render_template("detail.html")
+    r = requests.get('http://openapi.seoul.go.kr:8088/6d4d776b466c656533356a4b4b5872/json/RealtimeCityAir/1/99')
+    response = r.json()
+    rows = response['RealtimeCityAir']['row']
+
+    return render_template("detail.html", rows = rows)
 
 
 if __name__ == '__main__':
