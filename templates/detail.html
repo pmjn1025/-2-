@@ -43,6 +43,7 @@
 <body>
     <h1>상세페이지</h1>
     <button onclick="window.location.href = '/'">메인페이지로 가기</button>
+    <h3>받은 단어는 {{word}}</h3>
     <ul id="gu_list">
         {% for row in rows %}
             {% set gu_name = row["MSRSTE_NM"]  %}
