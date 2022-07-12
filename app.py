@@ -12,8 +12,14 @@ db =  client.dbsparta_plus_week2
 
 @app.route('/')
 def main():
+    # detail에서 msg 받아옴
+    msg = request.args.get("msg")
+
     # DB에서 저장된 단어 찾아서 HTML에 나타내기
-    return render_template("index.html")
+    # DB몽고의 id의 자료구조가 특이해서 render_template해서 보내주게 되면 오류가 나기때문에 False가 뜬다.
+    words = list(db.words.find({}, {"_id":False}))
+
+    return render_template("index.html", words= words, msg=msg)
 
 
 @app.route('/detail/<keyword>')
@@ -23,6 +29,11 @@ def detail(keyword):
     # API에서 단어 뜻 찾아서 결과 보내기
     # 여기서 데이터를 받아서 html로 보낼 것을 서버에서 정리해준다 jinjia-SSR(서버사이드랜더링)
     r = requests.get(f"https://owlbot.info/api/v4/dictionary/{keyword}", headers={"Authorization": "Token ff0ab0c5d7d41a250d6f369ac0334979358a469e"})
+
+    #만약 api로 받아온 데이터가 정상적으로 받아오지 않으면 메인화면으로 돌려라.
+    if r.status_code != 200 :
+       return redirect(url_for("main", msg = "없는 단어입니다."))
+
     result = r.json()
     print(result)
     # 받어온 것을 템플릿으로 보낸다.

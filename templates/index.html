@@ -1,26 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Sparta Vocabulary Notebook</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sparta Vocabulary Notebook</title>
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-              crossorigin="anonymous">
+    <meta property="og:title" content="Sparta Vocabulary Notebook"/>
+    <meta property="og:description" content="mini project for Web Plus"/>
+    <meta property="og:image" content="{{ url_for('static', filename='logo_red.png') }}"/>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-                crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-                crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <!-- 폰트어썸 버전 업데이트 되어서 회원가입하고 자신의 cdn을 받아와야 됨    -->
+    <script src="https://kit.fontawesome.com/958f56ad82.js" crossorigin="anonymous"></script>
 
-    </head>
-    <body>
-    </body>
+    <!-- css모음 파일을 만들고 링크를 걸때는 원래 진자언어를 쓰고 파일네임을 css모음 파일이름으로 선언    -->
+    <link href='{{ url_for("static", filename="mystyle.css") }}' rel="stylesheet">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+
+    <style>
+        /*검색창 css*/
+        .search-box {
+            width: 70%;
+            margin: 50px auto;
+            max-width: 700px;
+        }
+
+        /* 테이블 css */
+        .table {
+        width: 80%;
+        max-width: 800px;
+        margin: auto;
+        table-layout: fixed;
+    }
+
+    .table th {
+        border-top-style: none;
+    }
+
+    td {
+        background-color: white;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    td > a, a:visited, a:hover, a:active {
+        color: black;
+    }
+
+    thead:first-child tr:first-child th:first-child {
+        border-radius: 10px 0 0 0;
+    }
+
+    thead:first-child tr:first-child th:last-child {
+        border-radius: 0 10px 0 0;
+    }
+
+    tbody:last-child tr:last-child td:first-child {
+        border-radius: 0 0 0 10px;
+    }
+
+    tbody:last-child tr:last-child td:last-child {
+        border-radius: 0 0 10px 0;
+    }
+
+    tr.highlight > td{
+        background-color : #e8344e;
+        color:white;
+
+    }
+
+    tr.highlight > td > a{
+
+        color : white;
+
+    }
+
+
+    </style>
+
+    <script>
+        console.log("{{msg}}");
+
+        {% if msg != None%}
+            alert("없는 단어입니다.");
+        {% endif %}
+
+        // 서버에서 jinjia2 ssr을 통해 템플릿 랜더링한 rawdata들을 리스트로 표현
+        let words = {{words | tojson }}
+
+        // 워드_리스트를 선언
+        let word_list = [];
+
+        // 반복문으로 메인페이지에 있는 데이터를 워드_리스트에 넣음
+        for(let i = 0; i < words.length; i++){
+            word_list.push(words[i]["word"]);
+        }
+
+        console.log(word_list);
+
+        // 검색 기능
+        function find_word(){
+            // 대소문자를 소문자로 통일
+            let word = $('#input-word').val().toLowerCase();
+
+            if(word == ""){
+                alert('단어를 입력해주세요');
+                //뒤로 안넘어가게 return해주자.
+                return;
+            }
+
+            // 워드_리스트에 해당 word가 있으면(.includes)
+            if(word_list.includes(word)) {
+
+                // 하이라이트 이부분 중요
+                $(`#word-${word}`).addClass("highlight");
+                // siblings() : 형제 노드를 찾는 함수.
+                $(`#word-${word}`).siblings().removeClass("highlight");
+                $(`#word-${word}`)[0].scrollIntoView();
+
+            }else{
+                // 없으면 새단어를 위한 상세페이지로 이동
+                window.location.href=`/detail/${word}?status_give=new`;
+
+            }
+
+        }
+
+
+    </script>
+
+</head>
+<body>
+<div class="wrap">
+    <div class="banner" onclick="window.location.href='/'">
+
+
+    </div>
+
+    <div class="search-box d-flex justify-content-center">
+        <input id="input-word" class="form-control" style="margin-right: 0.5rem">
+        <button class="btn btn-light" onclick="find_word()"><i class="fa fa-search"></i></button>
+    </div>
+
+    <!-- 테이블 html start    -->
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col" style="width:30%">WORD</th>
+            <th scope="col">MEANING</th>
+        </tr>
+        </thead>
+        <tbody id="tbody-box">
+
+        {% for word in words %}
+        <tr id="word-{{ word.word }}">
+            <td><a href="/detail/{{ word.word }}?status_give=old">{{ word.word }}</a></td>
+            <td>
+                {{word.definition}}
+            </td>
+        </tr>
+        {% endfor%}
+
+        </tbody>
+    </table>
+
+    <!-- 테이블 html end    -->
+
+</div>
+
+
+</body>
 </html>
